@@ -1,64 +1,117 @@
-# Kit de Discovery de Produto
+# Product Discovery Kit para IA
 
-Ambiente estruturado para conduzir discoverys de produto do enquadramento até o PRD, com rastreabilidade total de evidências e governança humana em cada etapa.
+Um kit aberto de **8 skills + regras de governança** para transformar sua IA (Claude, Antigravity, Cursor, Claude Code, etc.) em um assistente estruturado de **Product Discovery** — do Enquadramento (Etapa 0) até o PRD final.
 
----
-
-## 🚀 Como Começar
-
-Para iniciar um novo discovery, basta digitar no chat:
-
-> *"Quero abrir o discovery de [tema/iniciativa]."*
-
-O assistente ativará automaticamente a skill `discovery-abrir` (Etapa 0 - Enquadramento), fará as perguntas iniciais e montará a estrutura de pastas e documentos vivos para você revisar.
+![Visão Geral do Product Discovery Kit](./docs/product-discovery-kit-overview.jpg)
 
 ---
 
-## 🛠️ Skills Disponíveis no Projeto
+## 💡 Por que este kit existe?
 
-As skills estão instaladas em `.agent/skills/` (e `.agents/skills/`):
+Quem atua como **Product Owner** ou **Product Manager** sabe que uma das partes mais difíceis de um discovery não é apenas coletar informações, mas **organizar e correlacionar dados que ficam espalhados em vários lugares diferentes** (transcrições de reuniões, planilhas de chamados do suporte, tabelas de benchmark, notas soltas).
 
-| Skill | Etapa / Função | Quando usar |
-|---|---|---|
-| **`discovery-abrir`** | Etapa 0: Enquadramento | Criar a pasta do discovery e gerar os documentos vivos e o enquadramento inicial. |
-| **`discovery-benchmark`** | Etapa 1: Benchmark | Rodadas de análise de concorrentes e referências públicas com quadro comparativo. |
-| **`discovery-roteiros`** | Preparação de Entrevistas | Gerar roteiros de entrevista personalizados por área interna, cliente ou especialista. |
-| **`discovery-entrevista`** | Etapas 2 e 3: Entrevistas | Consolidar transcrições ou notas de entrevistas separando fato, inferência e opinião. |
-| **`discovery-chamados`** | Etapa 4: Chamados de Suporte | Analisar exportações de chamados (tickets/helpdesk) com métricas quantitativas. |
-| **`discovery-atualizar`** | Cascata de Documentos Vivos | Manter em dia o andamento, mapa de requisitos, pendências e decisões ("Onde estamos?"). |
-| **`discovery-decisao-relatorio`** | Decisão e Relatórios | Matriz ponderada de decisão, critérios de corte e redação do relatório final. |
-| **`discovery-prd`** | PRD com Rastreabilidade | Redigir o PRD vinculando cada requisito à evidência que o originou. |
+Quando jogamos tudo isso numa IA comum sem estrutura, dois problemas acontecem:
+1. Ela perde o fio da meada de uma conversa para outra e não cruza o que o cliente falou na entrevista com o que apareceu nos chamados do suporte.
+2. Ela mistura **fato** com **opinião** ou **inferência**, tratando um comentário isolado ou uma dedução própria como verdade absoluta.
+
+### O que este kit resolve:
+- **Correlação contínua em Documentos Vivos:** Cada dado novo (entrevista, planilha de chamados, rodada de benchmark) atualiza em cascata o **Andamento**, o **Mapa de Requisitos**, o **Registro de Pendências** e o **Log de Decisões**.
+- **Separação explícita entre `[F]`, `[I]` e `[O]`:**
+  - `[F]` **Fato:** Dito pela fonte ou dado publicado, com referência e data.
+  - `[I]` **Inferência:** Leitura ou dedução feita pela IA a partir dos fatos.
+  - `[O]` **Opinião:** Ponto de vista de um entrevistado ou sugestão da IA.
+- **Você no comando (Pontos de Aprovação A e B):** A IA apresenta o plano antes de rodar uma etapa nova (**Ponto A**) e entrega tudo como `Rascunho` até você revisar e aprovar (**Ponto B**). Nenhuma etapa "conclui sozinha".
 
 ---
 
-## 📂 Estrutura de Arquivos
+## 🧩 As 8 Skills do Kit
 
 ```text
-teste_packDiscovery/
-├── .agent/skills/              # 8 skills do kit de discovery instaladas
-├── .agents/                    # Atalho/junção para compatibilidade de agentes
-├── Discoverys/                 # Diretório onde as pastas de cada discovery serão salvas
-├── docs/                       # Documentação do kit e instruções de arquitetura
-│   ├── 1-instrucoes-do-projeto.md
-│   ├── 2-guia-da-arquitetura.md
-│   └── LEIA-ME.md
-├── skills-para-upload/         # Arquivos .zip individuais para upload em outras plataformas (ex.: Claude)
-├── GEMINI.md                   # Regras permanentes e diretrizes do Antigravity
-├── AGENTS.md                   # Diretrizes universais de agentes
-├── CLAUDE.md                   # Diretrizes para Claude Code
-└── requirements.txt            # Dependências Python para análise de chamados
+0. Enquadramento ──► pergunta de decisão, opções, hipóteses, critérios
+        │
+        ├─► 1. Benchmark (rodadas)             ┐
+        ├─► Roteiros ─► 2. Entrevistas internas │  cada dado novo ─► cascata:
+        │            └► 3. Clientes e espec.    │  andamento, mapa de requisitos,
+        ├─► 4. Chamados de suporte             │  pendências, log de decisões
+        └─► Pedidos de dados internos          ┘
+                        │
+                        ▼
+        Mescla para decisão (matriz) ─► Relatório do discovery ─► PRD
+```
+
+| Skill | Etapa | O que faz |
+|---|---|---|
+| **`discovery-abrir`** | Etapa 0: Enquadramento | Define pergunta de decisão, opções, hipóteses e critérios, e monta a pasta com os documentos vivos. |
+| **`discovery-benchmark`** | Etapa 1: Benchmark | Planeja e executa rodadas comparativas de concorrentes usando apenas fontes públicas verificáveis. |
+| **`discovery-roteiros`** | Preparação de Entrevistas | Cria roteiros ligados às hipóteses para áreas internas (Engenharia, Suporte, CS, Comercial...), clientes e especialistas. |
+| **`discovery-entrevista`** | Etapas 2 e 3: Entrevistas | Consolida transcrições/notas separando `[F]` Fato, `[I]` Inferência e `[O]` Opinião, testando hipóteses e cruzando fontes. |
+| **`discovery-chamados`** | Etapa 4: Chamados | Consolida exportações de helpdesk/suporte (inclui script Python para cálculo de volume, SLA e mediana de resolução). |
+| **`discovery-atualizar`** | Documentos Vivos | Mantém andamento, mapa de requisitos, pendências e decisões sincronizados a cada novo insumo e responde *"Onde estamos?"*. |
+| **`discovery-decisao-relatorio`** | Decisão e Relatório | Monta a matriz ponderada de decisão, análise de sensibilidade e redige relatórios parciais ou o relatório final. |
+| **`discovery-prd`** | Entrega: PRD | Escreve o PRD com escopo (MVP, incrementos, fora de escopo), métricas e riscos — cada requisito rastreável até as evidências. |
+
+---
+
+## 📦 Como Instalar e Usar
+
+Você pode usar este kit de duas formas:
+
+### Opção 1: No Claude (Web ou Desktop)
+1. Baixe a pasta [`skills-para-upload/`](./skills-para-upload) (ou o pacote completo [`kit-discovery-de-produto.zip`](./kit-discovery-de-produto.zip)).
+2. No Claude, acesse **Personalizar > Skills** (*Customize > Skills*) e envie os 8 arquivos `.zip` que estão dentro de `skills-para-upload/`.
+3. Crie um **Projeto** novo no Claude, abra o arquivo [`docs/1-instrucoes-do-projeto.md`](./docs/1-instrucoes-do-projeto.md), preencha seus dados nos campos `{{ }}` e cole nas **Instruções do Projeto**.
+
+### Opção 2: Em IDEs e Agentes Locais (Antigravity, Claude Code, Cursor)
+1. Clone este repositório:
+   ```bash
+   git clone https://github.com/SEU-USUARIO/product-discovery-kit.git
+   ```
+2. O repositório já vem configurado com:
+   - [`.agent/skills/`](./.agent/skills) e [`skills/`](./skills): As 8 skills descompactadas com seus templates (`assets/`), referências (`references/`) e scripts (`scripts/`).
+   - [`GEMINI.md`](./GEMINI.md), [`CLAUDE.md`](./CLAUDE.md) e [`AGENTS.md`](./AGENTS.md): Regras permanentes carregadas automaticamente pelo agente.
+3. (Opcional) Para usar o script de análise quantitativa de chamados em planilhas `.xlsx`/`.csv`, instale as dependências Python:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## 💬 Exemplos de Comandos no Dia a Dia
+
+| O que você quer fazer | Como pedir para a IA |
+|---|---|
+| **Começar um discovery** | *"Quero abrir o discovery de `<tema ou produto>`."* |
+| **Rodar benchmark** | *"Abra a rodada 1 do benchmark com os concorrentes A, B e C."* |
+| **Preparar entrevista** | *"Prepare o roteiro da entrevista com a Engenharia amanhã, 40 minutos."* |
+| **Consolidar entrevista** | *"Segue a transcrição da entrevista com `<perfil/área>`."* (anexe ou cole) |
+| **Analisar suporte** | *"Segue a exportação de chamados do suporte."* (anexe a planilha) |
+| **Registrar decisão** | *"Decidi que o produto será vendido como módulo adicional."* |
+| **Checar status** | *"Onde estamos? O que falta validar nas hipóteses?"* |
+| **Tomar decisão** | *"Monte a matriz de decisão ponderada."* |
+| **Fechar relatório** | *"Faça o relatório final do discovery."* |
+| **Escrever o PRD** | *"Escreva o PRD a partir do mapa de requisitos."* |
+
+---
+
+## 📂 Estrutura do Repositório
+
+```text
+product-discovery-kit/
+├── skills/                         # As 8 skills abertas (templates, referências e scripts)
+├── skills-para-upload/             # As 8 skills em .zip prontas para upload no Claude
+├── .agent/skills/                  # Configuração automática para agentes locais (Antigravity/Cursor)
+├── docs/
+│   ├── 1-instrucoes-do-projeto.md  # Template de instruções para colar no seu Projeto
+│   ├── 2-guia-da-arquitetura.md    # Explicação completa do método e das 4 camadas
+│   └── LEIA-ME.md                  # Guia rápido de instalação original
+├── Discoverys/                     # Pasta base onde os discoverys locais são criados
+├── GEMINI.md / CLAUDE.md / AGENTS.md # Regras de governança para agentes de IA
+├── kit-discovery-de-produto.zip    # Pacote completo em arquivo único para download direto
+└── requirements.txt                # Dependências para o script de análise de chamados
 ```
 
 ---
 
-## 📋 Comandos e Exemplos de Prompt
+## 🤝 Contribuições e Feedback
 
-- **Abrir um discovery:** *"Quero abrir o discovery de módulo de pagamentos."*
-- **Benchmark:** *"Abra a rodada 1 de benchmark com os concorrentes A, B e C."*
-- **Roteiro de entrevista:** *"Prepare um roteiro de entrevista com a Engenharia sobre viabilidade técnica (40 min)."*
-- **Registrar entrevista:** *"Segue a transcrição da entrevista com o Diretor de Operações."*
-- **Analisar chamados:** *"Segue a planilha de chamados do suporte para consolidar."*
-- **Status do discovery:** *"Onde estamos no discovery atual? Quais pendências faltam?"*
-- **Registrar decisão:** *"Decidi que a solução será construída internamente (Opção A)."*
-- **Matriz de decisão:** *"Monte a matriz de decisão ponderada."*
-- **Gerar PRD:** *"Gere o PRD a partir das evidências do mapa de requisitos."*
+Sentiu falta de alguma etapa ou adaptou o kit para o contexto do seu time de produto? Fique à vontade para abrir uma *issue*, mandar um *pull request* ou compartilhar como tem usado!
