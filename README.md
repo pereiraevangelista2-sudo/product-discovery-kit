@@ -64,7 +64,7 @@ Você pode usar este kit de duas formas:
 ### Opção 2: Em IDEs e Agentes Locais (Antigravity, Claude Code, Cursor)
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/SEU-USUARIO/product-discovery-kit.git
+   git clone https://github.com/pereiraevangelista2-sudo/product-discovery-kit.git
    ```
 2. O repositório já vem configurado com:
    - [`.agent/skills/`](./.agent/skills) e [`skills/`](./skills): As 8 skills descompactadas com seus templates (`assets/`), referências (`references/`) e scripts (`scripts/`).
